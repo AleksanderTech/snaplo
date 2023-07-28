@@ -1,48 +1,71 @@
 <template>
   <div data-name="container" :class="getClasses('container')" @click="handleClickOutside">
-    <!-- header -->
     <div data-name="header" @click.stop="toggle()" :class="getClasses('header')">
       <label data-name="headerLabel" :class="getClasses('headerLabel')">
-        {{ selectedItem || placeholder }}
+        {{ itemValue(selectedItem) || placeholder }}
       </label>
-      <button
-        data-name="collapsedIconWrapper"
-        v-if="!display"
-        :class="getClasses('collapsedIconWrapper')"
-        v-html="
-          firstIcon ||
-          collapsedIcon({
-            svgClasses: getClasses('collapsedIconSvg'),
-            pathClasses: getClasses('collapsedIconPath'),
-          })
-        "
-      ></button>
-      <button
-        data-name="expandedIconWrapper"
-        v-else
-        :class="getClasses('expandedIconWrapper')"
-        v-html="
-          secondIcon ||
-          expandedIcon({
-            svgClasses: getClasses('expandedIconSvg'),
-            pathClasses: getClasses('expandedIconPath'),
-          })
-        "
-      ></button>
+      <template v-if="!display">
+        <button
+          data-name="collapsedIcon"
+          v-if="firstIcon"
+          v-html="firstIcon"
+          :class="getClasses('collapsedIcon')"
+        ></button>
+        <button data-name="collapsedIcon" v-else :class="getClasses('collapsedIcon')">
+          <svg
+            data-name="collapsedIconSvg"
+            xmlns="http://www.w3.org/2000/svg"
+            :class="getClasses('collapsedIconSvg')"
+            height="48"
+            width="48"
+            viewBox="0 0 48 48"
+          >
+            <path
+              data-name="collapsedIconPath"
+              :class="getClasses('collapsedIconPath')"
+              d="m24 30.8-12-12 2.15-2.15L24 26.5l9.85-9.85L36 18.8Z"
+            />
+          </svg>
+        </button>
+      </template>
+
+      <template v-else>
+        <button
+          data-name="expandedIcon"
+          v-if="secondIcon"
+          v-html="secondIcon"
+          :class="getClasses('expandedIcon')"
+        ></button>
+        <button data-name="expandedIcon" v-else :class="getClasses('expandedIcon')">
+          <svg
+            data-name="expandedIconSvg"
+            xmlns="http://www.w3.org/2000/svg"
+            :class="getClasses('expandedIconSvg')"
+            height="48"
+            width="48"
+            viewBox="0 0 48 48"
+          >
+            <path
+              data-name="expandedIconPath"
+              :class="getClasses('expandedIconPath')"
+              d="M14.15 30.15 12 28l12-12 12 12-2.15 2.15L24 20.3Z"
+            />
+          </svg>
+        </button>
+      </template>
     </div>
 
-    <!-- menu -->
     <ul data-name="menu" v-if="display" :class="getClasses('menu')">
       <li
         :data-name="`menuItem ${item == selectedItem ? 'selectedMenuItem' : ''}`"
         v-for="item of items"
         :class="[
           getClasses('menuItem'),
-          `${item == selectedItem ? getClasses('selectedMenuItem') : ''}`,
+          `${isEqualToSelected(item) ? getClasses('selectedMenuItem') : ''}`,
         ]"
         @click.stop="select(item)"
       >
-        {{ item }}
+        {{ itemValue(item) }}
       </li>
     </ul>
   </div>
@@ -50,30 +73,13 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 
-const collapsedIcon = ({
-  svgClasses = "w-full h-full",
-  pathClasses = "fill-slate-600",
-} = {}) => {
-  return `<svg data-name="collapsedIconSvg" xmlns="http://www.w3.org/2000/svg" class="${svgClasses}" height="48" width="48" viewBox="0 0 48 48"><path data-id="collapsedIconPath" class="${pathClasses}" d="m24 30.8-12-12 2.15-2.15L24 26.5l9.85-9.85L36 18.8Z"/></svg>`;
-};
-
-const expandedIcon = ({
-  svgClasses = "w-full h-full",
-  pathClasses = "fill-slate-600",
-} = {}) => {
-  return `<svg data-name="expandedIconSvg" xmlns="http://www.w3.org/2000/svg" class="${svgClasses}" height="48" width="48" viewBox="0 0 48 48"><path data-id="expandedIconPath" class="${pathClasses}" d="M14.15 30.15 12 28l12-12 12 12-2.15 2.15L24 20.3Z"/></svg>`;
-};
-
-const SELECT_ITEM = "select-item";
-
 const defaultClasses = {
   container: {
-    otherStyles: "",
     width: "w-full",
     position: "relative",
+    appendClasses: "",
   },
   header: {
-    otherStyles: "",
     display: "flex",
     gap: "gap-1",
     width: "w-full",
@@ -85,43 +91,44 @@ const defaultClasses = {
     fontSize: "text-sm",
     boxShadow: "shadow-sm",
     hover: "hover:bg-gray-50",
+    border: "border",
+    appendClasses: "",
   },
   headerLabel: {
-    otherStyles: "",
     textOverflow: "truncate",
+    appendClasses: "",
   },
-  collapsedIconWrapper: {
-    otherStyles: "",
+  collapsedIcon: {
     height: "h-5",
     width: "w-5",
     minWidth: "min-w-[1.25rem]",
+    appendClasses: "",
   },
   collapsedIconSvg: {
-    otherStyles: "",
     width: "w-full",
     height: "h-full",
+    appendClasses: "",
   },
   collapsedIconPath: {
-    otherStyles: "",
     fill: "fill-slate-600",
+    appendClasses: "",
   },
-  expandedIconWrapper: {
-    otherStyles: "",
+  expandedIcon: {
     height: "h-5",
     width: "w-5",
     minWidth: "min-w-[1.25rem]",
+    appendClasses: "",
   },
   expandedIconSvg: {
-    otherStyles: "",
     width: "w-full",
     height: "h-full",
+    appendClasses: "",
   },
   expandedIconPath: {
-    otherStyles: "",
     fill: "fill-slate-600",
+    appendClasses: "",
   },
   menu: {
-    otherStyles: "",
     position: "absolute",
     left: "left-0",
     right: "right-0",
@@ -132,25 +139,31 @@ const defaultClasses = {
     borderRadius: "rounded-md",
     backgroundColor: "bg-white",
     padding: "py-1",
+    border: "border",
     shadowBox: "shadow-md",
+    appendClasses: "",
   },
   menuItem: {
-    otherStyles: "",
     pointer: "cursor-pointer",
     padding: "px-4 py-2",
     fontSize: "text-sm",
     hover: "hover:bg-slate-100 hover:text-slate-900",
+    appendClasses: "",
   },
   selectedMenuItem: {
-    otherStyles: "",
     backgroundColor: "bg-slate-100",
     fontWeight: "font-semibold",
+    appendClasses: "",
   },
 };
 
 type NestedPartial<T> = {
   [key in keyof T]?: Partial<T[key]>;
 };
+
+export type Item = string | { id: number | string; value: any };
+
+const SELECT_ITEM_EVENT = "select-item";
 
 export default defineComponent({
   props: {
@@ -160,18 +173,23 @@ export default defineComponent({
     },
 
     items: {
-      type: Object as () => string[],
+      type: Object as () => Item[],
       required: true,
     },
 
     selected: {
-      type: String,
+      type: Object as () => Item,
       required: false,
     },
 
     placeholder: {
       type: String,
       default: "Select",
+    },
+
+    required: {
+      type: Boolean,
+      default: false,
     },
 
     eager: {
@@ -190,12 +208,10 @@ export default defineComponent({
     },
   },
 
-  emits: [SELECT_ITEM],
+  emits: [SELECT_ITEM_EVENT],
 
   data() {
     return {
-      collapsedIcon,
-      expandedIcon,
       defaultClasses: defaultClasses,
       display: false,
       selectedItem: this.selected || null,
@@ -203,7 +219,6 @@ export default defineComponent({
   },
 
   mounted() {
-    if (this.eager) this.$emit(SELECT_ITEM, this.selectedItem);
     document.addEventListener("click", this.handleClickOutside);
   },
 
@@ -212,16 +227,21 @@ export default defineComponent({
   },
 
   methods: {
-    select(item: string | null) {
-      this.selectedItem = this.selectedItem == item ? null : item;
+    // external api
+    select(item: Item | null) {
+      if (this.required) {
+        this.selectedItem = item;
+      } else {
+        this.selectedItem = this.isEqualToSelected(item) ? null : item;
+      }
       this.display = false;
-      this.$emit(SELECT_ITEM, this.selectedItem);
+      this.$emit(SELECT_ITEM_EVENT, this.selectedItem);
     },
 
-    getClasses(elName: keyof typeof this.defaultClasses): string {
-      const classes = this.classes[elName] || {};
+    getClasses(elementName: keyof typeof this.defaultClasses): string {
+      const classes = this.classes[elementName] || {};
       return Object.values({
-        ...this.defaultClasses[elName],
+        ...this.defaultClasses[elementName],
         ...classes,
       }).join(" ");
     },
@@ -234,6 +254,16 @@ export default defineComponent({
 
     toggle() {
       this.display = !this.display;
+    },
+
+    itemValue(item: Item | null) {
+      return typeof item == "object" && item != null ? item.value : item;
+    },
+
+    isEqualToSelected(item: Item | null) {
+      if (item === null || typeof item == "string") return item == this.selectedItem;
+      if (typeof this.selectedItem == "object") return item.id == this.selectedItem?.id;
+      return false;
     },
   },
 });
