@@ -2,4 +2,4 @@
 
 Copy-Paste Components with Full CSS Control.
 
-[snaplo.io](htts://snaplo.io)
+[snaplo.io](https://snaplo.io)
