@@ -18,7 +18,10 @@ export default defineConfig({
     sidebar: [
       {
         text: "Components",
-        items: [{ text: "Single Select Dropdown", link: "/components" }],
+        items: [
+          { text: "Single Select Dropdown", link: "/single-select-dropdown" },
+          { text: "Multi Select Dropdown", link: "/multi-select-dropdown" },
+        ],
       },
     ],
 
