@@ -448,7 +448,7 @@ const SELECT_ITEM_EVENT = "select-item";
 export const HeaderMode = {
   CHIP: "CHIP",
   TEXT: "TEXT",
-} as const;
+};
 
 export default defineComponent({
   props: {
@@ -458,7 +458,7 @@ export default defineComponent({
     },
 
     headerMode: {
-      type: Object as () => keyof typeof HeaderMode,
+      type: String,
       default: HeaderMode.CHIP,
     },
 
