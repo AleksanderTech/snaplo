@@ -151,7 +151,7 @@
       </div>
       <li
         :data-name="`menuItem${item.selected ? ' selectedMenuItem' : ''}`"
-        v-for="item of dropdownItems"
+        v-for="item of menuItems"
         :class="[
           getClasses('menuItem'),
           `${item.selected ? getClasses('selectedMenuItem') : ''}`,
@@ -195,11 +195,7 @@
           ></div>
         </template>
       </li>
-      <div
-        data-name="noItems"
-        :class="getClasses('noItems')"
-        v-if="!dropdownItems.length"
-      >
+      <div data-name="noItems" :class="getClasses('noItems')" v-if="!menuItems.length">
         {{ noItemsPlaceholder }}
       </div>
     </ul>
@@ -531,7 +527,7 @@ export default defineComponent({
   },
 
   computed: {
-    dropdownItems(): SelectedItem[] {
+    menuItems(): SelectedItem[] {
       return this.items.map((el: Item) => {
         if (typeof el == "string") {
           return { value: el, selected: this.selectedItems.includes(el) };
@@ -588,7 +584,7 @@ export default defineComponent({
 
       if (!item.selected) {
         this.selectedItems = this.selectedItems.filter(
-          (i) => !this.isEqualTo(i, item.value)
+          (i) => !this.isEqual(i, item.value)
         );
       } else {
         this.selectedItems.push(item.value);
@@ -598,17 +594,17 @@ export default defineComponent({
     },
 
     remove(item: Item) {
-      for (const i of this.dropdownItems) {
+      for (const i of this.menuItems) {
         if (typeof i.value == "string" && i.value === item) i.selected = false;
-        else if (typeof i.value == "object" && this.isEqualTo(i.value, item))
+        else if (typeof i.value == "object" && this.isEqual(i.value, item))
           i.selected = false;
       }
 
-      this.selectedItems = this.selectedItems.filter((i) => !this.isEqualTo(i, item));
+      this.selectedItems = this.selectedItems.filter((i) => !this.isEqual(i, item));
       this.$emit(SELECT_ITEM_EVENT, this.selectedItems);
     },
 
-    isEqualTo(item1: Item, item2: Item) {
+    isEqual(item1: Item, item2: Item) {
       if (typeof item1 == "string") return item1 == item2;
       if (typeof item2 == "object") return item1.id == item2.id;
       return false;

@@ -1,5 +1,5 @@
 <script setup>
-import SingleSelectDropdown from './components/SingleSelectDropdown.vue';
+import SingleSelectMenu from './components/SingleSelectMenu.vue';
 </script>
 
 # Components

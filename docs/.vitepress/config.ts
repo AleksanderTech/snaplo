@@ -19,8 +19,8 @@ export default defineConfig({
       {
         text: "Components",
         items: [
-          { text: "Single Select Dropdown", link: "/single-select-dropdown" },
-          { text: "Multi Select Dropdown", link: "/multi-select-dropdown" },
+          { text: "Single Select Menu", link: "/single-select-menu" },
+          { text: "Multi Select Menu", link: "/multi-select-menu" },
         ],
       },
     ],
