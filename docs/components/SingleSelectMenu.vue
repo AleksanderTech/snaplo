@@ -55,19 +55,24 @@
       </template>
     </div>
 
-    <ul data-name="menu" v-if="display" :class="getClasses('menu')">
-      <li
-        :data-name="`menuItem ${item == selectedItem ? 'selectedMenuItem' : ''}`"
-        v-for="item of items"
-        :class="[
-          getClasses('menuItem'),
-          `${isEqualToSelected(item) ? getClasses('selectedMenuItem') : ''}`,
-        ]"
-        @click.stop="select(item)"
-      >
-        {{ itemValue(item) }}
-      </li>
-    </ul>
+    <div data-name="menu" v-if="display" :class="getClasses('menu')">
+      <ul data-name="menuList" :class="getClasses('menuList')">
+        <li
+          :data-name="`menuItem ${item == selectedItem ? 'selectedMenuItem' : ''}`"
+          v-for="item of items"
+          :class="[
+            getClasses('menuItem'),
+            `${isEqualToSelected(item) ? getClasses('selectedMenuItem') : ''}`,
+          ]"
+          @click.stop="select(item)"
+        >
+          {{ itemValue(item) }}
+        </li>
+      </ul>
+      <div data-name="noItems" v-if="!items.length" :class="getClasses('noItems')">
+        {{ noItemsPlaceholder }}
+      </div>
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -75,11 +80,12 @@ import { defineComponent } from "vue";
 
 const defaultClasses = {
   container: {
+    addClasses: "",
     width: "w-full",
     position: "relative",
-    appendClasses: "",
   },
   header: {
+    addClasses: "",
     display: "flex",
     gap: "gap-1",
     width: "w-full",
@@ -91,44 +97,43 @@ const defaultClasses = {
     fontSize: "text-sm",
     boxShadow: "shadow-sm",
     hover: "hover:bg-gray-50",
-    border: "border",
-    appendClasses: "",
   },
   headerLabel: {
+    addClasses: "",
     textOverflow: "truncate",
-    appendClasses: "",
   },
   collapsedIcon: {
+    addClasses: "",
     height: "h-5",
     width: "w-5",
     minWidth: "min-w-[1.25rem]",
-    appendClasses: "",
   },
   collapsedIconSvg: {
+    addClasses: "",
     width: "w-full",
     height: "h-full",
-    appendClasses: "",
   },
   collapsedIconPath: {
+    addClasses: "",
     fill: "fill-slate-600",
-    appendClasses: "",
   },
   expandedIcon: {
+    addClasses: "",
     height: "h-5",
     width: "w-5",
     minWidth: "min-w-[1.25rem]",
-    appendClasses: "",
   },
   expandedIconSvg: {
+    addClasses: "",
     width: "w-full",
     height: "h-full",
-    appendClasses: "",
   },
   expandedIconPath: {
+    addClasses: "",
     fill: "fill-slate-600",
-    appendClasses: "",
   },
   menu: {
+    addClasses: "",
     position: "absolute",
     left: "left-0",
     right: "right-0",
@@ -139,21 +144,27 @@ const defaultClasses = {
     borderRadius: "rounded-md",
     backgroundColor: "bg-white",
     padding: "py-1",
-    border: "border",
     shadowBox: "shadow-md",
-    appendClasses: "",
+  },
+  menuList: {
+    addClasses: "",
   },
   menuItem: {
+    addClasses: "",
     pointer: "cursor-pointer",
     padding: "px-4 py-2",
     fontSize: "text-sm",
     hover: "hover:bg-slate-100 hover:text-slate-900",
-    appendClasses: "",
   },
   selectedMenuItem: {
+    addClasses: "",
     backgroundColor: "bg-slate-100",
     fontWeight: "font-semibold",
-    appendClasses: "",
+  },
+  noItems: {
+    addClasses: "",
+    padding: "px-4 py-2",
+    fontSize: "text-sm",
   },
 };
 
@@ -185,6 +196,11 @@ export default defineComponent({
     placeholder: {
       type: String,
       default: "Select",
+    },
+
+    noItemsPlaceholder: {
+      type: String,
+      default: "No items",
     },
 
     required: {
@@ -219,6 +235,7 @@ export default defineComponent({
   },
 
   mounted() {
+    if (this.eager) this.$emit(SELECT_ITEM_EVENT, this.selectedItem);
     document.addEventListener("click", this.handleClickOutside);
   },
 
@@ -228,14 +245,14 @@ export default defineComponent({
 
   methods: {
     // external api
-    select(item: Item | null) {
+    select(item: Item | null, emit = true) {
       if (this.required) {
         this.selectedItem = item;
       } else {
         this.selectedItem = this.isEqualToSelected(item) ? null : item;
       }
       this.display = false;
-      this.$emit(SELECT_ITEM_EVENT, this.selectedItem);
+      if (emit) this.$emit(SELECT_ITEM_EVENT, this.selectedItem);
     },
 
     getClasses(elementName: keyof typeof this.defaultClasses): string {

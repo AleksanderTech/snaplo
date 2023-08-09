@@ -3,14 +3,14 @@ import SingleSelectMenu from './components/SingleSelectMenu.vue';
 </script>
 
 <style module>
-  ul[data-name="menu"] {
+  ul[data-name="menuList"] {
     list-style-type: none;
     padding-right: 0;
     padding-left: 0;
     margin-top: 0.5rem;
   }
 
-  ul[data-name="menu"] li {
+  ul[data-name="menuList"] li {
     margin: 0;
   }
 </style>
@@ -23,13 +23,13 @@ Single Select Menu is used to pick one value from a list of options.
 
 <SingleSelectMenu
  :classes="{
-        container: { appendClasses: 'dark:text-gray-900' },
+        container: { addClasses: 'dark:text-gray-900' },
         header: {
-          appendClasses: 'dark:text-white border dark:border-gray-700',
+          addClasses: 'dark:text-white border dark:border-gray-700',
           backgroundColor: 'dark:bg-gray-900',
           hover: 'dark:hover:bg-gray-800',
         },
-        menu: { appendClasses: 'dark:text-white border dark:border-gray-700', backgroundColor: 'dark:bg-gray-900 bg-white' },
+        menu: { addClasses: 'dark:text-white border dark:border-gray-700', backgroundColor: 'dark:bg-gray-900 bg-white' },
         menuItem: { hover: 'dark:hover:bg-gray-800 hover:bg-gray-50' },
         selectedMenuItem: { backgroundColor: 'dark:bg-gray-800 bg-gray-50' },
         expandedIconPath: { fill: 'dark:fill-gray-200' },
